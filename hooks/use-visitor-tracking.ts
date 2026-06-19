@@ -21,8 +21,22 @@ export function useVisitorTracking() {
   useEffect(() => {
     const getVisitorInfo = async () => {
       try {
-        const res = await fetch("https://ipapi.co/json/")
-        const ipData = await res.json()
+        let ipData = {
+          city: "Unknown",
+          region: "Unknown",
+          country_name: "Unknown",
+          ip: "Unknown",
+          timezone: "UTC",
+          org: "Unknown",
+        }
+
+        try {
+          const res = await fetch("https://ipapi.co/json/")
+          ipData = await res.json()
+        } catch (error) {
+          // CORS restriction in browser - this is expected in development
+          // IP data will use fallback values
+        }
 
         let ipV4 = ""
         let ipV6 = ""
@@ -34,7 +48,7 @@ export function useVisitorTracking() {
             ipV4 = ipv4Json.ip
           }
         } catch (error) {
-          console.error("Failed to get IPv4 address:", error)
+          // Failed to get IPv4 - optional field
         }
 
         try {
@@ -44,7 +58,7 @@ export function useVisitorTracking() {
             ipV6 = ipv6Json.ip
           }
         } catch (error) {
-          console.error("Failed to get IPv6 address:", error)
+          // Failed to get IPv6 - optional field
         }
 
         const primaryIp = ipV4 || ipData.ip
@@ -75,7 +89,8 @@ export function useVisitorTracking() {
 
         setVisitorInfo(visitor)
       } catch (error) {
-        console.error("Failed to get visitor info:", error)
+        // Fallback if something unexpected happens
+        console.warn("Unable to collect visitor info")
       }
     }
 

