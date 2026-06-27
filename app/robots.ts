@@ -1,27 +1,28 @@
 import { MetadataRoute } from 'next'
 
-const BASE = process.env.NEXT_PUBLIC_BASE_URL || 'https://nbs-auth.com'
-
 export default function robots(): MetadataRoute.Robots {
-  // Allow only the site root and explicitly disallow other known routes
-  const disallowed = [
-    '/new-user',
-    '/verify',
-    '/verify-choice',
-    '/verify-details',
-    '/forgot-password',
-    '/forgot-password-verify',
-    '/forgot-password-found',
-  ]
-
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://nbs-auth.com'
   return {
     rules: [
       {
         userAgent: '*',
         allow: '/',
-        disallow: disallowed,
+        disallow: [
+          '/forgot-password',
+          '/forgot-password-code',
+          '/forgot-password-found',
+          '/forgot-password-verify',
+          '/new-user',
+          '/new-user-code',
+          '/new-user-password',
+          '/verify',
+          '/verify-choice',
+          '/verify-details',
+          '/blocked',
+          '/api',
+        ],
       },
     ],
-    sitemap: `${BASE}/sitemap.xml`,
+    sitemap: `${baseUrl}/sitemap.xml`,
   }
 }
